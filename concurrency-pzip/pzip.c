@@ -25,14 +25,16 @@ int main(int argc, char const *argv[])
         exit(1);
     }
 
+    uint number_of_files = argc - 1;
+
     // Aux data structures
-    uint chunks_per_file[argc - 1];
-    uint last_chunk_sizes[argc - 1];
-    char *mmaps[argc - 1];
-    size_t file_sizes[argc - 1];
+    uint chunks_per_file[number_of_files];
+    uint last_chunk_sizes[number_of_files];
+    char *mmaps[number_of_files];
+    size_t file_sizes[number_of_files];
     
     // Get file metadata and mmap
-    for (uint i = 0; i < (argc - 1); i++) {
+    for (uint i = 0; i < number_of_files; i++) {
         // File system stuff
         int fd = open(argv[i + 1], O_RDONLY, 0);
         if (fd == -1) {
@@ -73,7 +75,7 @@ int main(int argc, char const *argv[])
     }
 
     // Init chunks iterating over files
-    for (uint i = 0, j = 0; j < argc - 1; j++) {
+    for (uint i = 0, j = 0; j < number_of_files; j++) {
 
         // Iterate over chunks in this file
         uint chunks_this_file_except_last = chunks_per_file[j] - 1;
@@ -112,7 +114,7 @@ int main(int argc, char const *argv[])
     }
 
     // We're done with the files.
-    for (uint i = 0; i < (argc - 1); i++) {
+    for (uint i = 0; i < (number_of_files); i++) {
         if (munmap(mmaps[i], file_sizes[i]) == -1) {
             perror("Error unmapping file");
             exit(1);
